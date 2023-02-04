@@ -3,11 +3,20 @@
 require_once "config.php";
  
 // Define variables and initialize with empty values
-$username = $password = $confirm_password = "";
-$username_err = $password_err = $confirm_password_err = "";
+$fullname = $username = $password = $confirm_password = "";
+$fullname_err = $username_err = $password_err = $confirm_password_err = "";
  
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
+
+    $input_fullname = trim($_POST["fullname"]);
+    if(empty($input_fullname)){
+        $fullname_err = "Please enter a fullname.";
+    } elseif(!filter_var($input_fullname, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]+$/")))){
+        $fullname_err = "Please enter a valid fullname.";
+    } else{
+        $fullname = $input_fullname;
+    }
  
     // Validate username
     if(empty(trim($_POST["username"]))){
@@ -64,18 +73,20 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     }
     
     // Check input errors before inserting in database
-    if(empty($username_err) && empty($password_err) && empty($confirm_password_err)){
+    if(empty($fullname_err) && empty($username_err) && empty($password_err) && empty($confirm_password_err)){
         
         // Prepare an insert statement
-        $sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+        $sql = "INSERT INTO users (fullname, username, password, isAdmin) VALUES (?, ?, ?, ?)";
          
         if($stmt = $mysqli->prepare($sql)){
             // Bind variables to the prepared statement as parameters
-            $stmt->bind_param("ss", $param_username, $param_password);
+            $stmt->bind_param("ssss", $param_fullname, $param_username, $param_password, $param_isAdmin);
             
             // Set parameters
+            $param_fullname = $fullname;
             $param_username = $username;
             $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
+            $param_isAdmin = 1;
             
             // Attempt to execute the prepared statement
             if($stmt->execute()){
@@ -110,6 +121,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             <p>Please fill this form to create an account.</p>
 
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Fullname</label>
+                    <input type="text" name="fullname" class="form-control <?php echo (!empty($fullname_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $fullname; ?>">
+                    <span class="invalid-feedback"><?php echo $fullname_err; ?></span>
+                </div>
                 <div class="mb-3">
                     <label class="form-label">Username</label>
                     <input type="text" name="username" class="form-control <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $username; ?>">

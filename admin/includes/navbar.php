@@ -14,7 +14,7 @@
             <li><a class="dropdown-item" href="documents.php?page=list">All</a></li>
                 <?php
                     // Include config file
-                    require_once "config.php";
+                    // require_once "config.php";
                     
                     // Attempt select query execution
                     $sql = "SELECT * FROM documents";

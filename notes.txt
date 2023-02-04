@@ -1,0 +1,8 @@
+1. admin page
+2. admin create users
+3. documents, only admin can create delete update
+4. search feature
+5. sidebar layout - low prio
+6. users log history - low prio ?
+7. dashboard, chart graph ?
+- total users

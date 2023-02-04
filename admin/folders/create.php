@@ -4,7 +4,7 @@ if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
     $user_id = $_SESSION["id"];
 
     // Include config file
-    require_once "config.php";
+    // require_once "config.php";
     
     // Define variables and initialize with empty values
     $name = "";
